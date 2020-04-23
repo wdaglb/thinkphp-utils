@@ -1,0 +1,23 @@
+{
+    "name": "ke/thinkphp-utils",
+    "description": "the thinkphp utils",
+    "type": "library",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ke\\utils\\": "src/"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    },
+    "require-dev": {
+        "topthink/framework": "5.1.*"
+    }
+}
