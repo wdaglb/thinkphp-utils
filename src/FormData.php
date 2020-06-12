@@ -34,7 +34,7 @@ class FormData
     private $fields = [];
 
 
-    public function __construct(array $rule)
+    public function __construct(array $rule, $scene = null)
     {
         $rule = $this->ruleFilter($rule);
         $this->app = Container::get('app');
@@ -42,6 +42,9 @@ class FormData
         $this->validate->rule($rule);
         $this->_rules = $rule;
         $this->data = $this->app->request->param();
+        if (!is_null($scene)) {
+            $this->scene($scene);
+        }
     }
 
 
