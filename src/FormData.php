@@ -37,7 +37,6 @@ class FormData
     public function __construct($rule, $scene = null)
     {
         $this->app = Container::get('app');
-        $this->_rules = $this->ruleFilter($this->_rules);
         if (is_string($rule)) {
             $n = new $rule;
             $this->_rules = $n->rule;
@@ -47,6 +46,7 @@ class FormData
             $this->validate = $this->app->validate();
             $this->validate->rule($rule);
         }
+        $this->_rules = $this->ruleFilter($this->_rules);
 
         $this->data = $this->app->request->param();
         if (!is_null($scene)) {
