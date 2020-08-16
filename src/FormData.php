@@ -64,7 +64,7 @@ class FormData
                 if (strpos($value, '|') === false) {
                     $this->fields[] = $value;
                 } else {
-                    list($l, $r) = explode('|', $value);
+                    [$l, $r] = explode('|', $value);
                     $this->fields[] = $l;
                 }
             } else {
@@ -130,6 +130,22 @@ class FormData
     public function getError()
     {
         return $this->validate->getError();
+    }
+
+
+    /**
+     * 设置key的默认值,如果key不在rules列表里则不生效
+     * @param array $data
+     * @return $this
+     */
+    public function setDefault(array $data)
+    {
+        foreach ($data as $key=>$val) {
+            if (!isset($this->data[$key])) {
+                $this->data[$key] = $val;
+            }
+        }
+        return $this;
     }
 
 
