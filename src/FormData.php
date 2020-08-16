@@ -40,13 +40,14 @@ class FormData
         if (is_string($rule)) {
             $n = new $rule;
             $this->_rules = $n->rule;
+            $this->_rules = $this->ruleFilter($this->_rules);
             $this->validate = $this->app->validate($rule);
         } else {
             $this->_rules = $rule;
+            $this->_rules = $this->ruleFilter($this->_rules);
             $this->validate = $this->app->validate();
-            $this->validate->rule($rule);
+            $this->validate->rule($this->_rules);
         }
-        $this->_rules = $this->ruleFilter($this->_rules);
 
         $this->data = $this->app->request->param();
         if (!is_null($scene)) {
@@ -60,7 +61,12 @@ class FormData
         $arr = [];
         foreach ($rule as $str=>$value) {
             if (is_int($str)) {
-                $this->fields[] = $value;
+                if (strpos($value, '|') === false) {
+                    $this->fields[] = $value;
+                } else {
+                    list($l, $r) = explode('|', $value);
+                    $this->fields[] = $l;
+                }
             } else {
                 if (strpos($str, '|') === false) {
                     $this->fields[] = $str;
