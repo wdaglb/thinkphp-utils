@@ -82,6 +82,19 @@ class FormData
 
 
     /**
+     * 扩展可选无规则字段
+     * @param array $fields
+     * @return $this
+     */
+    public function extend(array $fields)
+    {
+        $this->fields[] = array_merge($this->fields, $fields);
+
+        return $this;
+    }
+
+
+    /**
      * 设置验证场景
      * @param string $name
      * @return FormData
