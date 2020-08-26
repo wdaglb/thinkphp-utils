@@ -174,7 +174,9 @@ class FormData
             }
         }
         foreach ($this->ext_keys as $key) {
-            $postData[$key] = $this->data[$key];
+            if (isset($this->data[$key])) {
+                $postData[$key] = $this->data[$key];
+            }
         }
         return $postData;
     }
