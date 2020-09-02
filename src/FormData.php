@@ -13,7 +13,7 @@ namespace ke\utils;
 use think\App;
 use think\Container;
 
-class FormData
+class FormData implements \ArrayAccess, \JsonSerializable
 {
     /**
      * @var App
@@ -174,7 +174,9 @@ class FormData
             }
         }
         foreach ($this->ext_keys as $key) {
-            $postData[$key] = $this->data[$key];
+            if (isset($this->data[$key])) {
+                $postData[$key] = $this->data[$key];
+            }
         }
         return $postData;
     }
@@ -214,4 +216,33 @@ class FormData
         unset($this->data[$name]);
     }
 
+
+    public function offsetExists($offset)
+    {
+        return isset($this->data[$offset]);
+    }
+
+
+    public function offsetGet($offset)
+    {
+        return $this->data[$offset];
+    }
+
+
+    public function offsetSet($offset, $value)
+    {
+        $this->data[$offset] = $value;
+    }
+
+
+    public function offsetUnset($offset)
+    {
+        unset($this->data[$offset]);
+    }
+
+
+    public function jsonSerialize()
+    {
+        return json_encode($this->data, JSON_UNESCAPED_UNICODE);
+    }
 }
