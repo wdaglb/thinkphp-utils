@@ -36,6 +36,9 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
     private $fields = [];
 
 
+    private $alias = [];
+
+
     public function __construct($rule, $scene = null)
     {
         $this->app = Container::get('app');
@@ -165,6 +168,18 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
 
 
     /**
+     * 设置键别名
+     * @param array $data
+     * @return $this
+     */
+    public function setAlias(array $data)
+    {
+        $this->alias = $data;
+        return $this;
+    }
+
+
+    /**
      * @return array
      */
     public function toArray()
@@ -178,6 +193,13 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
         foreach ($this->ext_keys as $key) {
             if (isset($this->data[$key])) {
                 $postData[$key] = $this->data[$key];
+            }
+        }
+        // 别名转换
+        foreach ($this->alias as $from=>$to) {
+            if (isset($postData[$from])) {
+                $postData[$to] = $postData[$from];
+                unset($postData[$from]);
             }
         }
         return $postData;
