@@ -13,7 +13,7 @@ namespace ke\utils;
 use think\App;
 use think\Container;
 
-class FormData implements \ArrayAccess, \JsonSerializable
+class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
 {
     /**
      * @var App
@@ -29,7 +29,9 @@ class FormData implements \ArrayAccess, \JsonSerializable
 
     private $_rules = [];
 
+
     private $ext_keys = [];
+
 
     private $fields = [];
 
@@ -181,10 +183,12 @@ class FormData implements \ArrayAccess, \JsonSerializable
         return $postData;
     }
 
+
     public function has($name)
     {
         return isset($this->data[$name]);
     }
+
 
     /**
      * @param $name
@@ -192,7 +196,8 @@ class FormData implements \ArrayAccess, \JsonSerializable
      */
     public function __get($name)
     {
-        return $this->data[$name] ?? '';
+        $postData = $this->toArray();
+        return $postData[$name];
     }
 
 
@@ -219,13 +224,15 @@ class FormData implements \ArrayAccess, \JsonSerializable
 
     public function offsetExists($offset)
     {
-        return isset($this->data[$offset]);
+        $postData = $this->toArray();
+        return isset($postData[$offset]);
     }
 
 
     public function offsetGet($offset)
     {
-        return $this->data[$offset];
+        $postData = $this->toArray();
+        return $postData[$offset];
     }
 
 
@@ -243,6 +250,14 @@ class FormData implements \ArrayAccess, \JsonSerializable
 
     public function jsonSerialize()
     {
-        return json_encode($this->data, JSON_UNESCAPED_UNICODE);
+        $postData = $this->toArray();
+        return json_encode($postData, JSON_UNESCAPED_UNICODE);
     }
+
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->toArray());
+    }
+
 }
