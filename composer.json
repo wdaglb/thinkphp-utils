@@ -4,17 +4,11 @@
     "type": "library",
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.1"
     },
     "autoload": {
         "psr-4": {
             "ke\\utils\\": "src/"
-        }
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://mirrors.aliyun.com/composer/"
         }
     },
     "require-dev": {
