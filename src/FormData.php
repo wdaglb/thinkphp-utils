@@ -260,6 +260,9 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
 
     public function offsetSet($offset, $value)
     {
+        if (array_search($offset, $this->ext_keys) === false) {
+            $this->ext_keys[] = $offset;
+        }
         $this->data[$offset] = $value;
     }
 
