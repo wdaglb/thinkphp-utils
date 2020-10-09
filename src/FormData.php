@@ -219,7 +219,7 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
     public function __get($name)
     {
         $postData = $this->toArray();
-        return $postData[$name];
+        return $postData[$name] ?? null;
     }
 
 
@@ -254,7 +254,7 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
     public function offsetGet($offset)
     {
         $postData = $this->toArray();
-        return $postData[$offset];
+        return $postData[$offset] ?? null;
     }
 
 
