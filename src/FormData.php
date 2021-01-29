@@ -41,7 +41,11 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
 
     public function __construct($rule, $scene = null)
     {
-        $this->app = Container::get('app');
+        if (defined('TP_VERSION') && TP_VERSION == '6.x') {
+            $this->app = Container::pull('app');
+        } else {
+            $this->app = Container::get('app');
+        }
         if (is_string($rule)) {
             $n = new $rule;
             $this->_rules = $n->rule;
