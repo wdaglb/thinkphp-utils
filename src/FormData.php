@@ -43,19 +43,31 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
     {
         if (defined('TP_VERSION') && TP_VERSION == '6.x') {
             $this->app = Container::pull('app');
+            if (is_string($rule)) {
+                $n = new $rule;
+                $this->_rules = $n->rule;
+                $this->_rules = $this->ruleFilter($this->_rules);
+                $this->validate = $this->app->validate;
+                $this->validate->rule($rule);
+            } else {
+                $this->_rules = $rule;
+                $this->_rules = $this->ruleFilter($this->_rules);
+                $this->validate = $this->app->validate;
+                $this->validate->rule($this->_rules);
+            }
         } else {
             $this->app = Container::get('app');
-        }
-        if (is_string($rule)) {
-            $n = new $rule;
-            $this->_rules = $n->rule;
-            $this->_rules = $this->ruleFilter($this->_rules);
-            $this->validate = $this->app->validate($rule);
-        } else {
-            $this->_rules = $rule;
-            $this->_rules = $this->ruleFilter($this->_rules);
-            $this->validate = $this->app->validate();
-            $this->validate->rule($this->_rules);
+            if (is_string($rule)) {
+                $n = new $rule;
+                $this->_rules = $n->rule;
+                $this->_rules = $this->ruleFilter($this->_rules);
+                $this->validate = $this->app->validate($rule);
+            } else {
+                $this->_rules = $rule;
+                $this->_rules = $this->ruleFilter($this->_rules);
+                $this->validate = $this->app->validate();
+                $this->validate->rule($this->_rules);
+            }
         }
 
         $this->data = $this->app->request->param();
