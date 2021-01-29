@@ -9,6 +9,11 @@ tp6使用需在入口文件定义TP_VERSION='6.x'
 define('TP_VERSION', '6.x');
 ```
 
+安装
+```
+composer require ke/thinkphp-utils dev-master
+```
+
 新增FormRequest，可以依赖注入使用，例子去除了命名空间，实际使用要自行添加
 ```
 class TestRequest extends FormRequest
