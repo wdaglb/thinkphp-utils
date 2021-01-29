@@ -37,44 +37,23 @@ class FormRequest
     private $fields = [];
 
 
+    private $defaults = [];
+
+
     private $alias = [];
 
 
-    public function __construct($rule, $scene = null)
+    public function __construct()
     {
         if (defined('TP_VERSION') && TP_VERSION == '6.x') {
             $this->app = Container::pull('app');
-            if (is_string($rule)) {
-                $n = new $rule;
-                $this->rules = $n->rule;
-                $this->rules = $this->ruleFilter($this->rules);
-                $this->validate = $this->app->validate;
-                $this->validate->rule($rule);
-            } else {
-                $this->rules = $rule;
-                $this->rules = $this->ruleFilter($this->rules);
-                $this->validate = $this->app->validate;
-                $this->validate->rule($this->rules);
-            }
+            $this->validate = $this->app->validate;
         } else {
             $this->app = Container::get('app');
-            if (is_string($rule)) {
-                $n = new $rule;
-                $this->rules = $n->rule;
-                $this->rules = $this->ruleFilter($this->rules);
-                $this->validate = $this->app->validate($rule);
-            } else {
-                $this->rules = $rule;
-                $this->rules = $this->ruleFilter($this->rules);
-                $this->validate = $this->app->validate();
-                $this->validate->rule($this->rules);
-            }
+            $this->validate = $this->app->validate();
         }
 
         $this->data = $this->app->request->param();
-        if (!is_null($scene)) {
-            $this->scene($scene);
-        }
     }
 
 
@@ -152,6 +131,9 @@ class FormRequest
         } else {
             $this->data = $data;
         }
+
+        $this->rules = $this->ruleFilter($this->rules);
+        $this->validate->rule($this->rules);
         if ($this->validate->check($this->data)) {
             return $this->toArray();
         }
@@ -172,11 +154,7 @@ class FormRequest
      */
     public function setDefault(array $data)
     {
-        foreach ($data as $key=>$val) {
-            if (!isset($this->data[$key])) {
-                $this->data[$key] = $val;
-            }
-        }
+        $this->defaults = array_merge($this->defaults, $data);
         return $this;
     }
 
@@ -198,7 +176,7 @@ class FormRequest
      */
     public function toArray()
     {
-        $postData = [];
+        $postData = array_merge($this->data, $this->defaults);
         foreach ($this->fields as $f) {
             if (isset($this->data[$f])) {
                 $postData[$f] = $this->data[$f];
