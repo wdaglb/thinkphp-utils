@@ -1,7 +1,7 @@
 <?php
 /**
  * +----------------------------------------------------------------------
- * | Name: keAdmin
+ * | Name: ThinkPHP-Utils
  * | Author King east To 1207877378@qq.com
  * +----------------------------------------------------------------------
  */
@@ -13,6 +13,7 @@ namespace ke\utils;
 use think\App;
 use think\Container;
 use think\exception\ValidateException;
+use think\Validate;
 
 class FormRequest
 {
@@ -42,6 +43,14 @@ class FormRequest
 
     private $alias = [];
 
+    protected $currentScene = '';
+
+    /**
+     * 验证场景定义
+     * @var array
+     */
+    protected $scene = [];
+
 
     public function __construct()
     {
@@ -54,6 +63,8 @@ class FormRequest
         }
 
         $this->data = $this->app->request->param();
+        $this->rules = $this->ruleFilter($this->rules);
+        $this->validate->rule(get_class($this));
     }
 
 
@@ -102,7 +113,7 @@ class FormRequest
      */
     public function scene($name)
     {
-        $this->validate->scene($name);
+        $this->currentScene = $name;
         return $this;
     }
 
@@ -115,6 +126,44 @@ class FormRequest
     public function message($message)
     {
         $this->validate->message($message);
+        return $this;
+    }
+
+    /**
+     * 指定需要验证的字段列表
+     * @access public
+     * @param  array $fields  字段名
+     * @return $this
+     */
+    public function only($fields)
+    {
+        $this->validate->only($fields);
+        return $this;
+    }
+
+    /**
+     * 移除某个字段的验证规则
+     * @access public
+     * @param  string|array  $field  字段名
+     * @param  mixed         $rule   验证规则 null 移除所有规则
+     * @return $this
+     */
+    public function remove($field, $rule = null)
+    {
+        $this->validate->remove($field, $rule);
+        return $this;
+    }
+
+    /**
+     * 追加某个字段的验证规则
+     * @access public
+     * @param  string|array  $field  字段名
+     * @param  mixed         $rule   验证规则
+     * @return $this
+     */
+    public function append($field, $rule = null)
+    {
+        $this->validate->append($field, $rule);
         return $this;
     }
 
@@ -132,8 +181,13 @@ class FormRequest
             $this->data = $data;
         }
 
-        $this->rules = $this->ruleFilter($this->rules);
-        $this->validate->rule($this->rules);
+        if (!$this->scene) {
+            // 自动切换至方法场景
+            $this->currentScene = $this->app->request->action();
+
+            $this->validate->scene($this->currentScene);
+        }
+
         if ($this->validate->check($this->data)) {
             return $this->toArray();
         }
