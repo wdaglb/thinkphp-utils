@@ -37,7 +37,7 @@ class FormRequest
     private $fields = [];
 
 
-    private $defaults = [];
+    protected $defaults = [];
 
 
     private $alias = [];
