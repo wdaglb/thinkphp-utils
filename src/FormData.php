@@ -39,6 +39,9 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
     private $alias = [];
 
 
+    private $defaults = [];
+
+
     public function __construct($rule, $scene = null)
     {
         if (defined('TP_VERSION') && TP_VERSION == '6.x') {
@@ -174,11 +177,7 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
      */
     public function setDefault(array $data)
     {
-        foreach ($data as $key=>$val) {
-            if (!isset($this->data[$key])) {
-                $this->data[$key] = $val;
-            }
-        }
+        $this->defaults = $data;
         return $this;
     }
 
@@ -200,7 +199,7 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
      */
     public function toArray()
     {
-        $postData = [];
+        $postData = array_merge($this->data, $this->defaults);
         foreach ($this->fields as $f) {
             if (isset($this->data[$f])) {
                 $postData[$f] = $this->data[$f];
