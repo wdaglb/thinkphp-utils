@@ -199,7 +199,7 @@ class FormData implements \ArrayAccess, \JsonSerializable, \IteratorAggregate
      */
     public function toArray()
     {
-        $postData = array_merge($this->data, $this->defaults);
+        $postData = array_merge([], $this->defaults);
         foreach ($this->fields as $f) {
             if (isset($this->data[$f])) {
                 $postData[$f] = $this->data[$f];
