@@ -13,15 +13,13 @@ namespace ke\utils;
 use think\App;
 use think\Container;
 use think\exception\ValidateException;
+use think\Loader;
+use think\Request;
 use think\Validate;
 
 class FormRequest
 {
-    /**
-     * @var App
-     */
-    protected $app;
-
+    protected $request;
 
     protected $data;
 
@@ -54,17 +52,29 @@ class FormRequest
 
     public function __construct()
     {
-        if (defined('TP_VERSION') && TP_VERSION == '6.x') {
+        $version = '5.1';
+        if (defined('TP_VERSION')) {
+            $version = TP_VERSION;
+        }
+
+        if ($version == '6.x') {
             $this->app = Container::pull('app');
             $this->validate = $this->app->validate;
+            $this->request = $this->app->request;
+        } elseif ($version == '5.0') {
+            $this->request = Request::instance();
+            $this->validate = new Validate($this->rules);
         } else {
             $this->app = Container::get('app');
             $this->validate = $this->app->validate();
+            $this->request = $this->app->request;
         }
 
-        $this->data = $this->app->request->param();
+        $this->data = $this->request->param();
         $this->rules = $this->ruleFilter($this->rules);
-        $this->validate->rule(get_class($this));
+        if (in_array($version, ['5.1', '6.x'])) {
+            $this->validate->rule(get_class($this));
+        }
     }
 
 
@@ -176,14 +186,14 @@ class FormRequest
     public function check($data = null)
     {
         if (is_null($data)) {
-            $this->data = $this->app->request->param();
+            $this->data = $this->request->param();
         } else {
             $this->data = $data;
         }
 
         if (!$this->scene) {
             // 自动切换至方法场景
-            $this->currentScene = $this->app->request->action();
+            $this->currentScene = $this->request->action();
 
             $this->validate->scene($this->currentScene);
         }
@@ -230,25 +240,25 @@ class FormRequest
      */
     public function toArray()
     {
+        $result = [];
         $postData = array_merge($this->data, $this->defaults);
         foreach ($this->fields as $f) {
             if (isset($this->data[$f])) {
-                $postData[$f] = $this->data[$f];
+                $result[$f] = $this->data[$f];
             }
         }
         foreach ($this->ext_keys as $key) {
             if (isset($this->data[$key])) {
-                $postData[$key] = $this->data[$key];
+                $result[$key] = $this->data[$key];
             }
         }
         // 别名转换
         foreach ($this->alias as $from=>$to) {
             if (isset($postData[$from])) {
-                $postData[$to] = $postData[$from];
-                unset($postData[$from]);
+                $result[$to] = $postData[$from];
             }
         }
-        return $postData;
+        return $result;
     }
 
 
