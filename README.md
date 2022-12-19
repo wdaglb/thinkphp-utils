@@ -3,6 +3,7 @@
 兼容thinkphp5.0、thinkphp5.1、thinkphp6.0
 
 tp6使用需在入口文件定义TP_VERSION='6.x'
+
 tp5.0使用需在入口文件定义TP_VERSION='5.0'
 
 如：
@@ -25,7 +26,7 @@ use ke\utils\FormRequest;
 
 class ArticleRequest extends FormRequest
 {
-    protected $rule = [
+    public $rules = [
         'cate_id' => 'require|number',
         'name' => 'require|number',
         'title' => 'require|number',
