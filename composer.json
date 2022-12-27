@@ -13,5 +13,10 @@
     },
     "require-dev": {
         "topthink/framework": "5.1.*"
+    },
+    "config": {
+        "allow-plugins": {
+            "topthink/think-installer": true
+        }
     }
 }
