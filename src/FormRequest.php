@@ -73,7 +73,7 @@ class FormRequest
         $this->data = $this->request->param();
         $this->rules = $this->ruleFilter($this->rules);
         if (in_array($version, ['5.1', '6.x'])) {
-            $this->validate->rule(get_class($this));
+            $this->validate->rule($this->rules);
         }
     }
 
