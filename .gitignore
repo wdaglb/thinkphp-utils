@@ -1,6 +1,5 @@
 /.idea
 /.vscode
 /vendor
-/composer.lock
 *.log
 .DS_Store
